@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">CARTOON</string>
+    <string name="notif_channel">CARTOON 사운드</string>
+    <string name="notif_text">차량 동작에 맞춰 효과음을 들려주고 있어요</string>
+    <string name="notif_stop">소리 끄기</string>
+</resources>

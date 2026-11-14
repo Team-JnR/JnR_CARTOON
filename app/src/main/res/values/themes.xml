@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.CARTOON" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/cartoon_bg</item>
+        <item name="android:statusBarColor">@color/cartoon_bg</item>
+        <item name="android:navigationBarColor">@color/cartoon_bg</item>
+    </style>
+</resources>
