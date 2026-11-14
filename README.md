@@ -1,41 +1,86 @@
 # CARTOON (카툰)
 
-> 깜빡이·와이퍼·기어 같은 차량의 평범한 동작에 "왼쪽! 왼쪽! 왼쪽!", "슥싹슥싹!" 같은 짧고 재미있는 소리를 입혀, 매일 하는 운전을 만화처럼 즐겁게 바꿔 주는 Pleos Connect 차량용 사운드 앱입니다.
+> **한 줄 소개** — 깜빡이·와이퍼·기어 같은 차량의 평범한 동작에 "왼쪽!", "슥싹!" 같은 짧고 재미있는 소리를 입혀, 매일 하는 운전을 만화처럼 즐겁게 바꿔 주는 Pleos Connect 차량용 사운드 앱입니다.
 
-CARTOON = Car(자동차) + Cartoon(만화). 현대자동차그룹 차량용 앱 개발 공모전 출품작의 **프로토타입**으로, "차량 동작이 바뀌면 고른 사운드 팩의 소리를 한 번 낸다"는 기본 동작을 담았습니다.
+- **앱 이름**: CARTOON (카툰) = Car(자동차) + Cartoon(만화)
+- **팀**: JnR
+- **구분**: 현대자동차그룹 차량용 앱 개발 공모전 출품작의 **프로토타입**. "차량 동작이 일어나면 고른 사운드 팩의 소리를 1번 낸다"는 기본 동작을 담았습니다.
 
 ## APK
 
-- 위치: [`apk/JnR_CARTOON_release.apk`](apk/JnR_CARTOON_release.apk)
-- 설치: `adb install -r -g apk/JnR_CARTOON_release.apk`
-  - `-g`를 붙이면 설치할 때 차량 조회 권한(`pleos.car.permission.*`)을 함께 허용합니다. 빼고 설치하면 첫 실행 때 권한을 요청합니다.
+| 항목 | 내용 |
+|---|---|
+| 파일 위치 | [`apk/JnR_CARTOON_release.apk`](apk/JnR_CARTOON_release.apk) |
+| 빌드 | release, 디버그 키 서명(설치·심사용). 버전 `0.1.0-prototype` |
+| 패키지 이름 | `io.github.picturehouse.cartoon` |
+| 지원 버전 | Android 9(API 28) 이상, Android Automotive 기기 |
 
-## 테스트 환경
+## 테스트 환경 및 필요한 설정
+
+### 테스트 환경
 
 | 항목 | 내용 |
 |---|---|
-| 에뮬레이터 | **Pleos Connect Emulator v2.1.0** (AVD `Pleos_Connect_v2.1.0`, Android API 34, arm64-v8a) |
-| 화면 규격 | **2560 × 1440 px, 160 dpi** (앱은 런처 오른쪽 영역, 약 1700 × 1220 px에 표시됨) |
+| 에뮬레이터 | **Pleos Connect Emulator v2.1.0** (AVD `Pleos_Connect_v2.1.0`, Android 14 / API 34, arm64-v8a) |
+| 화면 규격 | **2560 × 1440 px, 160 dpi** (가로). 앱은 런처 오른쪽 영역, 약 1700 × 1220 px에 표시됩니다. |
+| 개발 PC | macOS (Apple Silicon) |
 | Pleos SDK | Vehicle SDK `ai.pleos.playground:Vehicle:2.3.2` |
-| 빌드 | Android Studio, AGP 9.4.1, Gradle 9.6, Kotlin 2.2.10 (AGP 내장), Jetpack Compose (Material 3) |
+| 빌드 도구 | Android Studio, AGP 9.4.1, Gradle 9.6, Kotlin(AGP 내장, Compose 플러그인 2.2.10), Jetpack Compose (Material 3) |
 | SDK 버전 | minSdk 28, targetSdk/compileSdk 37 |
+
+### 필요한 설정
+
+- **권한**: 앱이 쓰는 권한은 아래와 같습니다. `adb install -g`로 설치하면 모두 미리 허용되고, `-g` 없이 설치하면 첫 실행 때 허용 창이 뜹니다.
+  - `pleos.car.permission.CAR_LIGHTS` (방향지시등·전조등), `CAR_WINDOWS` (와이퍼·창문), `CAR_DRIVE` (기어)
+  - `POST_NOTIFICATIONS` (소리가 켜져 있는 동안 표시되는 알림)
+- **에뮬레이터 소리**: 소리를 들으려면 PC 스피커가 켜져 있어야 하고, 에뮬레이터의 미디어 볼륨이 0이 아니어야 합니다.
+- **Virtual Console** (실제 Vehicle SDK 경로로 차량 신호를 바꿀 때만): `adb forward tcp:8088 tcp:8088`로 포트를 연결합니다.
+- **소스에서 빌드할 때만**:
+  - Pleos SDK 저장소(`https://nexus-playground.pleos.ai/repository/maven-releases/`)에 접속할 수 있어야 합니다(`settings.gradle.kts`에 설정되어 있음).
+  - Gradle 실행에는 JDK 17 이상이 필요합니다. 빌드용 JDK 25는 Gradle이 자동으로 내려받습니다(`gradle/gradle-daemon-jvm.properties`).
+  - `local.properties`의 `sdk.dir`가 Android SDK 경로를 가리켜야 합니다(Android Studio가 자동으로 만듦).
 
 ## 실행 방법
 
-1. Pleos Connect 에뮬레이터(v2.1.0, Cold boot)를 실행합니다.
-2. 빌드 후 설치합니다.
-   ```bash
-   ./gradlew :app:assembleRelease
-   adb install -r -g app/build/outputs/apk/release/app-release.apk
-   ```
-3. 앱 목록에서 **CARTOON**을 실행합니다. 상단에 `Pleos Vehicle SDK 연결됨`이 보이면 실제 차량 신호를 받고 있는 상태입니다.
-4. 차량 신호를 바꾸는 방법은 두 가지입니다.
+### 1. 설치
+
+Pleos Connect 에뮬레이터(v2.1.0)를 Cold boot로 실행한 뒤, 둘 중 한 가지 방법으로 설치합니다.
+
+- **A. 제출한 APK로 설치 (빌드 필요 없음)**
+  ```bash
+  adb install -r -g apk/JnR_CARTOON_release.apk
+  ```
+- **B. 소스에서 빌드해 설치**
+  ```bash
+  ./gradlew :app:assembleRelease
+  adb install -r -g app/build/outputs/apk/release/app-release.apk
+  ```
+
+다른 키로 서명된 CARTOON이 이미 설치되어 있으면 `adb uninstall io.github.picturehouse.cartoon`으로 먼저 지웁니다.
+
+### 2. 실행과 사용
+
+1. 앱 목록에서 **CARTOON**을 실행합니다.
+   - 오른쪽 위에 `🚘 Pleos Vehicle SDK 연결됨`이 보이면 실제 차량 신호를 받고 있는 상태입니다.
+   - 차량 서비스가 없는 기기에서는 `🧪 시뮬레이션 모드`로 동작합니다.
+2. 메인 화면 위쪽 가운데의 **`🔊 소리 켜짐`** 버튼으로 소리를 켜고 끕니다(처음에는 켜져 있음).
+3. 아래쪽 **사운드 팩** 카드를 눌러 팩을 고릅니다. 카드 오른쪽 위 **⚙**를 누르면 그 팩의 동작별 소리를 보고 `▶ 듣기`로 미리 들을 수 있습니다(주차 중에만).
+4. 차량 신호를 바꾸면 소리가 납니다. 신호를 바꾸는 방법은 두 가지입니다.
    - **Virtual Console** (실제 Vehicle SDK 경로):
      ```bash
      adb forward tcp:8088 tcp:8088
      ```
      브라우저에서 `http://127.0.0.1:8088/`을 열고 Turn Signal State(Blink left/right), Front Wiper(Low/High), 기어, 하향등, 창문을 바꿉니다.
-   - **앱 안의 차량 시뮬레이터** (시연용): 오른쪽 패널에서 기어 P/R/N/D, 방향지시등, 와이퍼, 전조등, 창문 신호를 바로 넣을 수 있습니다. Pleos 차량 서비스가 없는 기기에서는 자동으로 시뮬레이션 모드로 동작합니다.
+   - **앱 안의 차량 시뮬레이터** (시연용): 오른쪽 패널에서 기어 P/R/N/D, 방향지시등, 와이퍼, 전조등, 창문 신호를 바로 넣을 수 있습니다. 오른쪽 위 `시뮬레이터 닫기/열기`로 숨기거나 열 수 있습니다.
+5. 앱 화면을 닫거나 다른 앱(내비 등)으로 바꿔도 소리가 켜져 있는 동안은 계속 소리가 납니다.
+
+### 3. 테스트 실행
+
+```bash
+./gradlew :app:testDebugUnitTest
+```
+
+트리거 엔진 테스트 9개와 음원 검사 1개를 실행합니다.
 
 ## 사운드 팩
 
@@ -95,10 +140,11 @@ SimulatorPanel ─────┘                                         (res/r
 | 파일 | 역할 |
 |---|---|
 | `vehicle/PleosVehicleSource.kt` | Vehicle SDK의 `TurnSignal`, `Wiper`(상태 + 속도 스위치), `Gear`, `Light`(하향등), `Window`(1열 좌·우)를 구독합니다. 영역별로 실패를 격리하고, 받지 못한 신호는 화면에 '이 차량에서는 지원되지 않음'으로 표시합니다. |
-| `engine/TriggerEngine.kt` | 순수 Kotlin. 상태 변화를 재생 지시(한 번 / 주기 반복 시작 / 멈춤)로 바꿉니다. `./gradlew :app:testDebugUnitTest`로 엔진 테스트 8개와 음원 검사 1개를 실행합니다. |
+| `engine/TriggerEngine.kt` | 순수 Kotlin. 상태 변화를 재생 지시(한 번 / 주기 반복 시작 / 멈춤)로 바꿉니다. `./gradlew :app:testDebugUnitTest`로 엔진 테스트 9개와 음원 검사 1개를 실행합니다. |
 | `model/SoundPack.kt` | 사운드 팩 2종과 동작별 음원(`R.raw.*`)·문구를 연결합니다. |
 | `audio/SoundBank.kt` | 앱이 시작할 때 `res/raw`의 음원 18개를 SoundPool에 미리 올려 둡니다. |
-| `data/PackStore.kt` | 고른 사운드 팩을 기억합니다. |
+| `data/PackStore.kt` | 고른 사운드 팩과 소리 켜기/끄기 상태를 기억합니다. |
+| `ui/CartoonRoot.kt`, `ui/PackSettingsScreen.kt` | 메인 화면(소리 켜기/끄기·상태, 사운드 팩 카드)과 팩 설정 화면(동작별 소리·미리 듣기)입니다. |
 | `audio/SoundPlayer.kt` | SoundPool 재생, 오디오 포커스, 2초 제한, 볼륨 상한을 맡습니다. |
 | `service/CartoonService.kt` | 소리를 켠 동안만 도는 포그라운드 서비스입니다. 종료 시 SDK·SoundPool을 해제합니다. Android 14 이상에서는 `specialUse` 유형을 씁니다(계속 오디오를 재생하지 않고 신호를 기다리는 서비스이므로). |
 | `vehicle/DrivingRestrictions.kt` | AAOS `CarUxRestrictionsManager`로 주행 규제 상태를 구독해, 규제 중에는 사운드 팩 바꾸기·미리 듣기를 잠급니다(Pleos '주행 규제 개발 가이드'). |
